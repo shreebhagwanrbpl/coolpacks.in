@@ -96,8 +96,8 @@ export async function fetchAllDynamicProducts() {
 
     // 2. Fetch extra fallback collections if any
     const extraSnapshots = await Promise.allSettled([
-      getDocs(collection(db, "websites", "clinidixcom", "products")),
-      getDocs(collection(db, "websites", "clinidixcom", "items")),
+      getDocs(collection(db, "websites", "coolpacksin", "products")),
+      getDocs(collection(db, "websites", "coolpacksin", "items")),
       getDocs(collection(db, "products")),
       getDocs(collection(db, "items")),
     ]);
@@ -114,9 +114,5 @@ export async function fetchAllDynamicProducts() {
   }
 
   const fetchedList = Array.from(productsMap.values());
-  if (fetchedList.length > 0) {
-    return fetchedList;
-  }
-
-  return fallbackProducts;
+  return fetchedList;
 }

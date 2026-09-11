@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { motion } from "framer-motion";
+
 import {
   Microscope,
   FlaskConical,
@@ -32,9 +33,14 @@ import ServiceCard from "@/components/ServiceCard";
 import ProductCard from "@/components/ProductCard";
 import ContactForm from "@/components/ContactForm";
 import HeroCarousel from "@/components/HeroCarousel";
+
 import { fallbackProducts } from "@/data/productsData";
-import { fallbackServices } from "@/data/servicesData";
 import { fetchAllDynamicProducts } from "@/lib/fetchProducts";
+
+
+// ============================================================
+// STATIC STATS
+// ============================================================
 
 const stats = [
   {
@@ -63,6 +69,11 @@ const stats = [
   },
 ];
 
+
+// ============================================================
+// STATIC PILLARS
+// ============================================================
+
 const pillars = [
   {
     title: "Certified Calibration Standards",
@@ -90,23 +101,31 @@ const pillars = [
   },
 ];
 
+
+// ============================================================
+// STATIC TESTIMONIALS
+// ============================================================
+
 const testimonials = [
   {
-    quote: "Raj Biomedical transformed our central laboratory setup. Their automated analyzers increased our daily sample throughput by 40% with zero downtime.",
+    quote:
+      "Raj Biosis transformed our central laboratory setup. Their automated analyzers increased our daily sample throughput by 40% with zero downtime.",
     author: "Dr. Arvind Sharma",
     role: "Chief Pathologist",
     institution: "Apollo Diagnostics Center",
     rating: 5,
   },
   {
-    quote: "The 24/7 AMC response team is outstanding. When our ICU patient monitor system faced a sensor issue, their engineer arrived within 90 minutes.",
+    quote:
+      "The 24/7 AMC response team is outstanding. When our ICU patient monitor system faced a sensor issue, their engineer arrived within 90 minutes.",
     author: "Dr. Meenakshi Sundaram",
     role: "Medical Director",
     institution: "Metro Multispecialty Hospital",
     rating: 5,
   },
   {
-    quote: "Their cold-chain reagent delivery has never failed us. Quality control results are consistently accurate, month after month.",
+    quote:
+      "Their cold-chain reagent delivery has never failed us. Quality control results are consistently accurate, month after month.",
     author: "Rajesh Varma",
     role: "Laboratory Operations Manager",
     institution: "LifeCare PathLabs",
@@ -114,92 +133,352 @@ const testimonials = [
   },
 ];
 
+
+// ============================================================
+// HOME PAGE
+// ============================================================
+
 export default function Home({ city }) {
-  const [services, setServices] = useState(fallbackServices);
-  const [products, setProducts] = useState(fallbackProducts);
-  const [activeCategory, setActiveCategory] = useState("All");
+
+  // ==========================================================
+  // DYNAMIC SERVICES ONLY
+  // ==========================================================
+
+  const [services, setServices] = useState([]);
+
+  const [products, setProducts] = useState([]);
+
   const [homeData, setHomeData] = useState(null);
+
   const [contactInfo, setContactInfo] = useState([]);
+
   const [loading, setLoading] = useState(true);
 
+
+  // ==========================================================
+  // DISTRICT / CITY ROUTE
+  // ==========================================================
+
   const pathname = usePathname();
+
   const pathParts = pathname.split("/").filter(Boolean);
 
-  const staticRoutes = ["about", "services", "items", "contact"];
+  const staticRoutes = [
+    "about",
+    "services",
+    "items",
+    "contact",
+  ];
+
   const district =
-    pathParts.length > 0 && !staticRoutes.includes(pathParts[0])
+    pathParts.length > 0 &&
+      !staticRoutes.includes(pathParts[0])
       ? pathParts[0]
       : "";
 
-  const locationTitle = city || (district ? district.replace(/-/g, " ") : "");
+
+  const locationTitle =
+    city ||
+    (district
+      ? district.replace(/-/g, " ")
+      : "");
+
+
+  // ==========================================================
+  // DYNAMIC LINK HELPER
+  // ==========================================================
 
   const makeLink = (path) => {
-    if (!district) return path;
-    if (path === "/") return `/${district}`;
+
+    if (!district) {
+      return path;
+    }
+
+    if (path === "/") {
+      return `/${district}`;
+    }
+
     return `/${district}${path}`;
   };
 
+
+  // ==========================================================
+  // FETCH ALL DATA
+  // ==========================================================
+
   useEffect(() => {
+
+    let isMounted = true;
+
+
     const fetchData = async () => {
+
       try {
-        // Fetch home page configuration (title, description, buttons, carousel media)
+
+        // ====================================================
+        // HOME PAGE DATA
+        // ====================================================
+
         try {
+
           const homeSnap = await getDoc(
-            doc(db, "websites", "clinidixcom", "pages", "home")
+            doc(
+              db,
+              "websites",
+              "coolpacksin",
+              "pages",
+              "home"
+            )
           );
-          if (homeSnap.exists()) {
+
+
+          if (
+            isMounted &&
+            homeSnap.exists()
+          ) {
             setHomeData(homeSnap.data());
           }
+
         } catch (homeErr) {
-          console.error("Error fetching home data:", homeErr);
-        }
 
-        // Fetch contact information for dynamic helpline info
-        try {
-          const contactSnap = await getDoc(
-            doc(db, "websites", "clinidixcom", "pages", "contact")
+          console.error(
+            "Error fetching home data:",
+            homeErr
           );
-          if (contactSnap.exists()) {
-            setContactInfo(contactSnap.data().contactInfo || []);
+
+        }
+
+
+        // ====================================================
+        // CONTACT DATA
+        // ====================================================
+
+        try {
+
+          const contactSnap = await getDoc(
+            doc(
+              db,
+              "websites",
+              "coolpacksin",
+              "pages",
+              "contact"
+            )
+          );
+
+
+          if (
+            isMounted &&
+            contactSnap.exists()
+          ) {
+
+            const contactData =
+              contactSnap.data()?.contactInfo;
+
+            setContactInfo(
+              Array.isArray(contactData)
+                ? contactData
+                : []
+            );
+
+          } else if (isMounted) {
+
+            setContactInfo([]);
+
           }
+
         } catch (contactErr) {
-          console.error("Error fetching contact data:", contactErr);
+
+          console.error(
+            "Error fetching contact data:",
+            contactErr
+          );
+
+          if (isMounted) {
+            setContactInfo([]);
+          }
+
         }
 
-        // Fetch services from Firebase if available
-        const serviceSnap = await getDoc(
-          doc(db, "websites", "clinidixcom", "pages", "services")
-        );
-        if (serviceSnap.exists() && serviceSnap.data().services?.length > 0) {
-          const dbServices = serviceSnap.data().services.map((s, idx) => ({
-            ...fallbackServices[idx % fallbackServices.length],
-            title: s.title || fallbackServices[idx % fallbackServices.length].title,
-            desc: s.desc || fallbackServices[idx % fallbackServices.length].desc,
-          }));
-          setServices(dbServices);
+
+        // ====================================================
+        // SERVICES FROM FIREBASE ONLY
+        // ====================================================
+
+        try {
+
+          const serviceSnap = await getDoc(
+            doc(
+              db,
+              "websites",
+              "coolpacksin",
+              "pages",
+              "services"
+            )
+          );
+
+
+          if (!isMounted) {
+            return;
+          }
+
+
+          if (serviceSnap.exists()) {
+
+            const firebaseServices =
+              serviceSnap.data()?.services;
+
+
+            if (Array.isArray(firebaseServices)) {
+
+              const dynamicServices =
+                firebaseServices
+                  .map((service, index) => {
+
+                    const title =
+                      typeof service?.title === "string"
+                        ? service.title.trim()
+                        : "";
+
+                    const desc =
+                      typeof service?.desc === "string"
+                        ? service.desc.trim()
+                        : "";
+
+                    return {
+                      id:
+                        service?.id ||
+                        `service-${index}`,
+
+                      title,
+
+                      desc,
+                    };
+
+                  })
+                  .filter(
+                    (service) =>
+                      service.title &&
+                      service.desc
+                  );
+
+
+              // Firebase data only
+              setServices(dynamicServices);
+
+            } else {
+
+              // No valid Firebase service array
+              setServices([]);
+
+            }
+
+          } else {
+
+            // Firebase service document doesn't exist
+            setServices([]);
+
+          }
+
+        } catch (serviceErr) {
+
+          console.error(
+            "Error fetching dynamic services:",
+            serviceErr
+          );
+
+          // IMPORTANT:
+          // Never use static fallback services
+          if (isMounted) {
+            setServices([]);
+          }
+
         }
 
-        // Fetch products dynamically from Firestore
-        const fetchedProducts = await fetchAllDynamicProducts();
-        if (fetchedProducts && fetchedProducts.length > 0) {
-          setProducts(fetchedProducts);
+
+        // ====================================================
+        // PRODUCTS FROM FIREBASE
+        // ====================================================
+
+        try {
+
+          const fetchedProducts =
+            await fetchAllDynamicProducts();
+
+
+          if (!isMounted) {
+            return;
+          }
+
+
+          if (Array.isArray(fetchedProducts)) {
+
+            setProducts(fetchedProducts);
+
+          } else {
+
+            setProducts([]);
+
+          }
+
+        } catch (productErr) {
+
+          console.error(
+            "Error fetching dynamic products:",
+            productErr
+          );
+
+          if (isMounted) {
+            setProducts([]);
+          }
+
         }
+
       } catch (err) {
-        console.error("Using fallback data:", err);
+
+        console.error(
+          "Error loading homepage data:",
+          err
+        );
+
+        if (isMounted) {
+          setServices([]);
+          setProducts([]);
+        }
+
       } finally {
-        setLoading(false);
+
+        if (isMounted) {
+          setLoading(false);
+        }
+
       }
+
     };
 
+
     fetchData();
+
+
+    return () => {
+      isMounted = false;
+    };
+
   }, []);
 
-  const categories = ["All", ...Array.from(new Set(products.map((p) => p.category)))];
 
-  const filteredProducts =
-    activeCategory === "All"
-      ? products.slice(0, 6)
-      : products.filter((p) => p.category === activeCategory).slice(0, 6);
+  // ==========================================================
+  // FEATURED PRODUCTS
+  // ==========================================================
+
+  const featuredProducts =
+    products.slice(0, 3);
+
+
+  // ==========================================================
+  // SERVICE ICONS
+  // Icons are visual only.
+  // Service content comes from Firebase.
+  // ==========================================================
 
   const serviceIcons = [
     <Microscope size={28} key={1} />,
@@ -210,69 +489,170 @@ export default function Home({ city }) {
     <Award size={28} key={6} />,
   ];
 
-  // Helper to extract dynamic phone from contact info
+
+  // ==========================================================
+  // DYNAMIC PHONE
+  // ==========================================================
+
   const helplinePhone = (() => {
+
     const item = contactInfo.find(
-      (c) =>
-        c?.label?.toLowerCase().includes("phone") ||
-        c?.label?.toLowerCase().includes("mobile") ||
-        c?.label?.toLowerCase().includes("helpline") ||
-        c?.label?.toLowerCase().includes("contact")
+      (contact) => {
+
+        const label =
+          contact?.label?.toLowerCase() || "";
+
+        return (
+          label.includes("phone") ||
+          label.includes("mobile") ||
+          label.includes("helpline") ||
+          label.includes("contact")
+        );
+
+      }
     );
-    if (!item) return "";
-    if (Array.isArray(item.value)) return item.value[0] || "";
-    return typeof item.value === "string" ? item.value.trim() : "";
+
+
+    if (!item) {
+      return "";
+    }
+
+
+    if (Array.isArray(item.value)) {
+      return item.value[0] || "";
+    }
+
+
+    return typeof item.value === "string"
+      ? item.value.trim()
+      : "";
+
   })();
 
-  // Helper to extract dynamic email from contact info
+
+  // ==========================================================
+  // DYNAMIC EMAIL
+  // ==========================================================
+
   const supportEmail = (() => {
+
     const item = contactInfo.find(
-      (c) =>
-        c?.label?.toLowerCase().includes("email") ||
-        c?.label?.toLowerCase().includes("mail")
+      (contact) => {
+
+        const label =
+          contact?.label?.toLowerCase() || "";
+
+        return (
+          label.includes("email") ||
+          label.includes("mail")
+        );
+
+      }
     );
-    if (!item) return "";
-    if (Array.isArray(item.value)) return item.value[0] || "";
-    return typeof item.value === "string" ? item.value.trim() : "";
+
+
+    if (!item) {
+      return "";
+    }
+
+
+    if (Array.isArray(item.value)) {
+      return item.value[0] || "";
+    }
+
+
+    return typeof item.value === "string"
+      ? item.value.trim()
+      : "";
+
   })();
+
+
+  // ==========================================================
+  // PAGE UI
+  // ==========================================================
 
   return (
-    <div className="bg-[#FFF9EF]/40 text-[#38240D]">
-      {/* ================= DYNAMIC HERO BANNER & CAROUSEL ================= */}
+
+    <div className="bg-slate-50 text-slate-900">
+
+
+      {/* ======================================================
+          DYNAMIC HERO
+      ====================================================== */}
+
       <HeroCarousel
         homeData={homeData}
         locationTitle={locationTitle}
         makeLink={makeLink}
       />
 
-      {/* ================= STATS TICKER ================= */}
-      <section className="bg-gradient-to-r from-[#38240D] via-[#5B4634] to-[#38240D] py-10 text-white shadow-inner">
+
+      {/* ======================================================
+          STATS TICKER
+      ====================================================== */}
+
+      <section className="bg-slate-900 py-10 text-white shadow-inner">
+
         <div className="container-custom">
+
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+
             {stats.map((item, idx) => {
+
               const Icon = item.icon;
+
               return (
-                <div key={idx} className="flex items-center gap-4">
-                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#C05800]/25 text-[#E4C5A2] border border-[#C05800]/40">
+
+                <div
+                  key={idx}
+                  className="flex items-center gap-4"
+                >
+
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-slate-800 text-slate-200 border border-slate-700">
+
                     <Icon size={26} />
+
                   </div>
+
+
                   <div>
+
                     <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
                       {item.number}
                     </h3>
-                    <p className="text-xs sm:text-sm font-bold text-[#E4C5A2]">{item.title}</p>
-                    <p className="text-[11px] text-[#E8D3BC]/80 hidden sm:block">{item.desc}</p>
+
+                    <p className="text-xs sm:text-sm font-bold text-slate-200">
+                      {item.title}
+                    </p>
+
+                    <p className="text-[11px] text-slate-400 hidden sm:block">
+                      {item.desc}
+                    </p>
+
                   </div>
+
                 </div>
+
               );
+
             })}
+
           </div>
+
         </div>
+
       </section>
 
-      {/* ================= PILLARS / WHY CHOOSE US ================= */}
-      <section className="section-padding bg-gradient-to-b from-white via-[#FFF9EF] to-[#FDFBD4]">
+
+      {/* ======================================================
+          PILLARS
+      ====================================================== */}
+
+      <section className="section-padding bg-gradient-to-b from-white via-slate-50 to-slate-100/60">
+
         <div className="container-custom">
+
           <SectionTitle
             badge="Why Modern Labs Choose Us"
             title="Engineered for the Workday"
@@ -280,90 +660,172 @@ export default function Home({ city }) {
             center
           />
 
+
           <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+
             {pillars.map((pillar, index) => {
+
               const Icon = pillar.icon;
+
               return (
+
                 <div
                   key={index}
-                  className="group relative flex flex-col justify-between rounded-3xl border border-[#E8D3BC] bg-white p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:border-[#C05800]/50 hover:shadow-2xl hover:shadow-[#C05800]/15"
+                  className="group relative flex flex-col justify-between rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-slate-300 hover:shadow-xl hover:shadow-slate-900/5"
                 >
+
                   <div>
-                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F3E4D2] text-[#C05800] transition-all duration-300 group-hover:bg-[#C05800] group-hover:text-white group-hover:scale-110 shadow-sm">
+
+                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-800 transition-all duration-300 group-hover:bg-slate-800 group-hover:text-white group-hover:scale-110 shadow-sm">
+
                       <Icon size={28} />
+
                     </div>
 
-                    <span className="mb-3 inline-block rounded-full bg-[#FFF9EF] border border-[#E8D3BC] px-3 py-1 text-xs font-bold text-[#713600]">
+
+                    <span className="mb-3 inline-block rounded-full bg-slate-100 border border-slate-200 px-3 py-1 text-xs font-bold text-slate-800">
                       {pillar.badge}
                     </span>
 
-                    <h3 className="mb-3 text-xl font-bold text-[#38240D] group-hover:text-[#C05800] transition-colors">
+
+                    <h3 className="mb-3 text-xl font-bold text-slate-900 group-hover:text-slate-700 transition-colors">
                       {pillar.title}
                     </h3>
 
-                    <p className="text-sm leading-relaxed text-[#5B4634]">
+
+                    <p className="text-sm leading-relaxed text-slate-600">
                       {pillar.desc}
                     </p>
+
                   </div>
 
-                  <div className="mt-8 pt-4 border-t border-[#E8D3BC]/40 flex items-center gap-2 text-xs font-bold text-[#C05800]">
-                    <span>Learn standard</span>
-                    <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+
+                  <div className="mt-8 pt-4 border-t border-slate-100 flex items-center gap-2 text-xs font-bold text-slate-800">
+
+                    <span>
+                      Learn standard
+                    </span>
+
+                    <ArrowRight
+                      size={14}
+                      className="transition-transform group-hover:translate-x-1"
+                    />
+
                   </div>
+
                 </div>
+
               );
+
             })}
+
           </div>
+
         </div>
+
       </section>
 
-      {/* ================= FEATURED PRODUCTS SHOWCASE ================= */}
-      <section className="section-padding bg-white border-y border-[#E8D3BC]/50">
+
+      {/* ======================================================
+          FEATURED PRODUCTS
+      ====================================================== */}
+
+      <section className="section-padding bg-white border-y border-slate-200">
+
         <div className="container-custom">
+
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+
             <SectionTitle
               badge="Diagnostic Inventory"
               title="Equipment Worth Exploring"
               description="Explore our curated catalog of automated clinical analyzers, PCR units, ICU patient monitors, and laboratory centrifuges."
             />
 
+
             <Link
               href={makeLink("/items")}
-              className="inline-flex items-center gap-2 rounded-2xl bg-[#FFF9EF] border border-[#E8D3BC] px-6 py-3.5 text-sm font-bold text-[#C05800] shadow-sm transition-all hover:bg-[#C05800] hover:text-white hover:border-[#C05800] shrink-0"
+              className="inline-flex items-center gap-2 rounded-2xl bg-slate-100 border border-slate-200 px-6 py-3.5 text-sm font-bold text-slate-800 shadow-sm transition-all hover:bg-slate-800 hover:text-white hover:border-slate-800 shrink-0"
             >
-              <span>View All Products</span>
+
+              <span>
+                View All Products
+              </span>
+
               <ArrowRight size={16} />
+
             </Link>
+
           </div>
 
-          {/* Category Tabs */}
-          <div className="mt-10 flex flex-wrap items-center gap-3 border-b border-[#E8D3BC]/60 pb-4">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`rounded-xl px-5 py-2.5 text-xs sm:text-sm font-bold transition-all ${activeCategory === cat
-                  ? "bg-[#C05800] text-white shadow-md shadow-[#C05800]/20"
-                  : "bg-[#FFF9EF] border border-[#E8D3BC] text-[#5B4634] hover:bg-[#F3E4D2]"
-                  }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
 
           {/* Product Grid */}
-          <div className="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {filteredProducts.map((prod) => (
-              <ProductCard key={prod.id} product={prod} makeLink={makeLink} />
-            ))}
+          <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+
+            {loading ? (
+
+              Array.from({ length: 3 }).map((_, index) => (
+
+                <div
+                  key={index}
+                  className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm animate-pulse"
+                >
+
+                  <div className="h-52 rounded-2xl bg-slate-100" />
+
+                  <div className="mt-5 h-6 w-3/4 rounded bg-slate-100" />
+
+                  <div className="mt-3 h-4 w-full rounded bg-slate-100" />
+
+                  <div className="mt-2 h-4 w-5/6 rounded bg-slate-100" />
+
+                </div>
+
+              ))
+
+            ) : featuredProducts.length > 0 ? (
+
+              featuredProducts.map((prod) => (
+
+                <ProductCard
+                  key={prod.id}
+                  product={prod}
+                  makeLink={makeLink}
+                />
+
+              ))
+
+            ) : (
+
+              <div className="col-span-full py-12 text-center">
+
+                <p className="text-base font-bold text-slate-900">
+                  No Instruments Available
+                </p>
+
+                <p className="mt-1 text-sm text-slate-600">
+                  Diagnostic equipment will appear here when added to the catalog.
+                </p>
+
+              </div>
+
+            )}
+
           </div>
+
         </div>
+
       </section>
 
-      {/* ================= SERVICES MATRIX ================= */}
-      <section className="section-padding bg-gradient-to-b from-[#FDFBD4] via-white to-[#FFF9EF]">
+
+      {/* ======================================================
+          DYNAMIC SERVICES MATRIX
+      ====================================================== */}
+
+      <section className="section-padding bg-gradient-to-b from-slate-100/50 via-white to-slate-50">
+
         <div className="container-custom">
+
           <SectionTitle
             badge="Healthcare Solutions"
             title="Support Built Around Your Workflow"
@@ -371,188 +833,433 @@ export default function Home({ city }) {
             center
           />
 
+
           <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {services.map((srv, idx) => (
-              <ServiceCard
-                key={srv.id || idx}
-                icon={serviceIcons[idx % serviceIcons.length]}
-                title={srv.title}
-                description={srv.desc}
-                badge={srv.badge}
-                turnaround={srv.turnaround}
-                highlights={srv.highlights}
-                makeLink={makeLink}
-              />
-            ))}
+
+
+            {/* =================================================
+                LOADING SERVICES
+            ================================================= */}
+
+            {loading ? (
+
+              Array.from({ length: 3 }).map((_, index) => (
+
+                <div
+                  key={index}
+                  className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm animate-pulse"
+                >
+
+                  <div className="h-14 w-14 rounded-2xl bg-slate-100" />
+
+                  <div className="mt-6 h-6 w-3/4 rounded bg-slate-100" />
+
+                  <div className="mt-3 h-4 w-full rounded bg-slate-100" />
+
+                  <div className="mt-2 h-4 w-5/6 rounded bg-slate-100" />
+
+                </div>
+
+              ))
+
+            ) : services.length > 0 ? (
+
+              /* =================================================
+                 FIREBASE SERVICES ONLY
+              ================================================= */
+
+              services.map((service, index) => (
+
+                <ServiceCard
+                  key={service.id || index}
+                  icon={
+                    serviceIcons[
+                    index % serviceIcons.length
+                    ]
+                  }
+                  title={service.title}
+                  description={service.desc}
+                  makeLink={makeLink}
+                />
+
+              ))
+
+            ) : (
+
+              /* =================================================
+                 NO STATIC FALLBACK
+              ================================================= */
+
+              <div className="col-span-full py-16 text-center">
+
+                <div className="mx-auto max-w-md rounded-3xl border border-slate-200 bg-white p-10 shadow-sm">
+
+                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 text-slate-500">
+
+                    <Wrench size={30} />
+
+                  </div>
+
+
+                  <h3 className="mt-5 text-xl font-bold text-slate-900">
+                    No Services Available
+                  </h3>
+
+
+                  <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                    Service information is currently unavailable.
+                    Please check back later or contact our team.
+                  </p>
+
+
+                  <Link
+                    href={makeLink("/contact")}
+                    className="mt-6 inline-flex items-center justify-center rounded-2xl bg-slate-800 px-6 py-3 text-sm font-bold !text-white transition-all hover:bg-slate-700"
+                  >
+                    Contact Our Team
+                  </Link>
+
+                </div>
+
+              </div>
+
+            )}
+
           </div>
+
         </div>
+
       </section>
 
-      {/* ================= ISO & QUALITY CERTIFICATION BANNER ================= */}
-      <section className="section-padding bg-[#38240D] text-white relative overflow-hidden">
-        <div className="pointer-events-none absolute -right-20 -bottom-20 h-96 w-96 rounded-full bg-[#C05800]/20 blur-3xl" />
+
+      {/* ======================================================
+          ISO & QUALITY CERTIFICATION
+      ====================================================== */}
+
+      <section className="section-padding bg-slate-900 text-white relative overflow-hidden">
+
+        <div className="pointer-events-none absolute -right-20 -bottom-20 h-96 w-96 rounded-full bg-slate-800/40 blur-3xl" />
+
         <div className="container-custom relative z-10">
+
           <div className="grid lg:grid-cols-12 gap-12 items-center">
+
             <div className="lg:col-span-7">
-              <span className="inline-flex items-center gap-2 rounded-full bg-[#C05800]/30 border border-[#C05800]/50 px-4 py-1.5 text-xs font-bold text-[#E4C5A2] uppercase tracking-wider">
-                <Award size={16} /> Quality Assurance & Compliance
+
+              <span className="inline-flex items-center gap-2 rounded-full bg-slate-800 border border-slate-700 px-4 py-1.5 text-xs font-bold text-slate-200 uppercase tracking-wider">
+
+                <Award size={16} />
+
+                Quality Assurance & Compliance
+
               </span>
+
 
               <h2 className="mt-6 text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-tight">
                 Uncompromised Clinical Accuracy & Regulatory Standards
               </h2>
 
-              <p className="mt-4 text-base sm:text-lg text-[#E8D3BC]/90 leading-relaxed">
-                Raj Biosisstrictly adheres to international quality protocols. Every equipment installation comes with complete IQ/OQ/PQ validation documentation and certified calibration reports.
+
+              <p className="mt-4 text-base sm:text-lg text-slate-300 leading-relaxed">
+                Raj Biosis strictly adheres to international quality protocols. Every equipment installation comes with complete IQ/OQ/PQ validation documentation and certified calibration reports.
               </p>
 
+
               <div className="mt-8 grid sm:grid-cols-2 gap-4">
-                <div className="rounded-2xl border border-[#E8D3BC]/20 bg-white/5 p-5 backdrop-blur-sm">
+
+                <div className="rounded-2xl border border-slate-700/60 bg-slate-800/50 p-5 backdrop-blur-sm">
+
                   <h4 className="text-lg font-bold text-white flex items-center gap-2">
-                    <ShieldCheck size={20} className="text-[#C05800]" />
+
+                    <ShieldCheck
+                      size={20}
+                      className="text-slate-300"
+                    />
+
                     ISO 13485 & CE Compliance
+
                   </h4>
-                  <p className="mt-2 text-xs text-[#E8D3BC]/80">
+
+
+                  <p className="mt-2 text-xs text-slate-400">
                     Certified medical device quality management system for diagnostic analyzers.
                   </p>
+
                 </div>
 
-                <div className="rounded-2xl border border-[#E8D3BC]/20 bg-white/5 p-5 backdrop-blur-sm">
+
+                <div className="rounded-2xl border border-slate-700/60 bg-slate-800/50 p-5 backdrop-blur-sm">
+
                   <h4 className="text-lg font-bold text-white flex items-center gap-2">
-                    <Clock size={20} className="text-[#C05800]" />
+
+                    <Clock
+                      size={20}
+                      className="text-slate-300"
+                    />
+
                     2-Hour SLA Maintenance
+
                   </h4>
-                  <p className="mt-2 text-xs text-[#E8D3BC]/80">
+
+
+                  <p className="mt-2 text-xs text-slate-400">
                     Dedicated engineer dispatch team ready for emergency hospital repairs.
                   </p>
+
                 </div>
+
               </div>
+
             </div>
 
+
             <div className="lg:col-span-5">
-              <div className="rounded-3xl border border-[#E8D3BC]/30 bg-gradient-to-br from-white/10 to-white/5 p-8 backdrop-blur-md text-center">
-                <div className="mx-auto flex h-24 w-24 sm:h-28 sm:w-28 flex-col items-center justify-center rounded-full bg-gradient-to-br from-[#E06D00] via-[#C05800] to-[#8C3E00] text-white shadow-2xl shadow-[#C05800]/50 border-2 border-amber-300/40 p-2">
+
+              <div className="rounded-3xl border border-slate-700/60 bg-slate-800/60 p-8 backdrop-blur-md text-center">
+
+                <div className="mx-auto flex h-24 w-24 sm:h-28 sm:w-28 flex-col items-center justify-center rounded-full bg-slate-900 text-white shadow-2xl border-2 border-slate-600 p-2">
+
                   <span className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-none">
                     100%
                   </span>
-                  <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#FDFBD4] mt-1">
+
+                  <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-300 mt-1">
                     Certified
                   </span>
+
                 </div>
+
+
                 <h3 className="mt-6 text-2xl font-bold text-white">
                   Compliance Guarantee
                 </h3>
-                <p className="mt-3 text-sm text-[#E8D3BC] leading-relaxed">
+
+
+                <p className="mt-3 text-sm text-slate-300 leading-relaxed">
                   All instruments tested with traceable reference standards before dispatch to your medical facility.
                 </p>
+
+
                 <Link
                   href={makeLink("/contact")}
-                  className="mt-6 inline-flex items-center justify-center gap-2 rounded-2xl bg-[#C05800] !text-white px-8 py-3.5 text-sm font-bold shadow-xl shadow-[#C05800]/40 transition-all hover:bg-[#E06D00] hover:shadow-2xl hover:-translate-y-0.5 border border-amber-400/30"
+                  className="mt-6 inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-700 !text-white px-8 py-3.5 text-sm font-bold shadow-xl transition-all hover:bg-slate-600 hover:-translate-y-0.5 border border-slate-600"
                 >
-                  <span className="!text-white font-bold">Request Inspection Certificate</span>
-                  <ArrowRight size={16} className="!text-white" />
+
+                  <span className="!text-white font-bold">
+                    Request Inspection Certificate
+                  </span>
+
+                  <ArrowRight
+                    size={16}
+                    className="!text-white"
+                  />
+
                 </Link>
+
               </div>
+
             </div>
+
           </div>
+
         </div>
+
       </section>
 
-      {/* ================= TESTIMONIALS ================= */}
-      <section className="section-padding bg-gradient-to-b from-white via-[#FFF9EF] to-[#FDFBD4]">
+
+      {/* ======================================================
+          TESTIMONIALS
+      ====================================================== */}
+
+      <section className="section-padding bg-gradient-to-b from-white via-slate-50 to-slate-100/60">
+
         <div className="container-custom">
+
           <SectionTitle
             badge="What Our Partners Say"
             title="Chosen by Diagnostic Teams"
-            description="Read how healthcare professionals rely onRaj Biosisfor accurate diagnostics and uninterrupted equipment uptime."
+            description="Read how healthcare professionals rely on Raj Biosis for accurate diagnostics and uninterrupted equipment uptime."
             center
           />
 
+
           <div className="mt-16 grid gap-8 lg:grid-cols-3">
+
             {testimonials.map((t, idx) => (
+
               <div
                 key={idx}
-                className="flex flex-col justify-between rounded-3xl border border-[#E8D3BC] bg-white p-8 shadow-md transition-all hover:-translate-y-1 hover:shadow-xl"
+                className="flex flex-col justify-between rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-900/5"
               >
+
                 <div>
-                  <div className="flex gap-1 text-[#C05800] mb-4">
-                    {Array.from({ length: t.rating }).map((_, i) => (
-                      <span key={i}>★</span>
+
+                  <div className="flex gap-1 text-slate-800 mb-4">
+
+                    {Array.from({
+                      length: t.rating,
+                    }).map((_, i) => (
+
+                      <span key={i}>
+                        ★
+                      </span>
+
                     ))}
+
                   </div>
-                  <p className="text-sm sm:text-base leading-relaxed text-[#5B4634] italic">
+
+
+                  <p className="text-sm sm:text-base leading-relaxed text-slate-600 italic">
                     "{t.quote}"
                   </p>
+
                 </div>
 
-                <div className="mt-8 border-t border-[#E8D3BC]/60 pt-4 flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#F3E4D2] text-[#C05800] font-bold text-lg">
+
+                <div className="mt-8 border-t border-slate-100 pt-4 flex items-center gap-3">
+
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-800 font-bold text-lg">
+
                     {t.author.charAt(4) || "D"}
+
                   </div>
+
+
                   <div>
-                    <h4 className="text-base font-bold text-[#38240D]">{t.author}</h4>
-                    <p className="text-xs text-[#5B4634]">{t.role} — <span className="text-[#C05800] font-medium">{t.institution}</span></p>
+
+                    <h4 className="text-base font-bold text-slate-900">
+                      {t.author}
+                    </h4>
+
+                    <p className="text-xs text-slate-500">
+
+                      {t.role}
+
+                      {" — "}
+
+                      <span className="text-slate-800 font-medium">
+                        {t.institution}
+                      </span>
+
+                    </p>
+
                   </div>
+
                 </div>
+
               </div>
+
             ))}
+
           </div>
+
         </div>
+
       </section>
 
-      {/* ================= QUICK INQUIRY FORM SECTION ================= */}
-      <section className="section-padding bg-gradient-to-br from-[#FDFBD4] via-white to-[#F3E4D2] border-t border-[#E8D3BC]">
+
+      {/* ======================================================
+          QUICK INQUIRY
+      ====================================================== */}
+
+      <section className="section-padding bg-gradient-to-b from-white to-slate-100/80 border-t border-slate-200">
+
         <div className="container-custom">
+
           <div className="grid lg:grid-cols-12 gap-12 items-center">
+
             <div className="lg:col-span-5">
+
               <SectionTitle
                 badge="Direct Consultation"
                 title="Planning a Purchase or Need Technical Guidance?"
                 description="Our biomedical engineering consultants will analyze your laboratory requirements, recommend optimal instruments, and provide a customized quote."
               />
 
+
               <div className="mt-8 space-y-4">
+
                 {helplinePhone && (
+
                   <a
                     href={`tel:${String(helplinePhone).replace(/\s+/g, "")}`}
-                    className="flex items-center gap-4 rounded-2xl border border-[#E8D3BC] bg-white p-4 shadow-sm hover:border-[#C05800]/40 transition-colors"
+                    className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:border-slate-400 transition-colors"
                   >
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#F3E4D2] text-[#C05800] shrink-0">
+
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 text-slate-800 shrink-0">
+
                       <PhoneCall size={22} />
+
                     </div>
+
+
                     <div>
-                      <p className="text-xs font-bold text-[#5B4634]">Direct Helpline</p>
-                      <p className="text-base font-bold text-[#38240D]">{helplinePhone}</p>
+
+                      <p className="text-xs font-bold text-slate-500">
+                        Direct Helpline
+                      </p>
+
+                      <p className="text-base font-bold text-slate-900">
+                        {helplinePhone}
+                      </p>
+
                     </div>
+
                   </a>
+
                 )}
+
 
                 {supportEmail && (
+
                   <a
                     href={`mailto:${supportEmail}`}
-                    className="flex items-center gap-4 rounded-2xl border border-[#E8D3BC] bg-white p-4 shadow-sm hover:border-[#C05800]/40 transition-colors"
+                    className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:border-slate-400 transition-colors"
                   >
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#F3E4D2] text-[#C05800] shrink-0">
+
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 text-slate-800 shrink-0">
+
                       <Mail size={22} />
+
                     </div>
+
+
                     <div>
-                      <p className="text-xs font-bold text-[#5B4634]">Official Email</p>
-                      <p className="text-base font-bold text-[#38240D] break-all">{supportEmail}</p>
+
+                      <p className="text-xs font-bold text-slate-500">
+                        Official Email
+                      </p>
+
+                      <p className="text-base font-bold text-slate-900 break-all">
+                        {supportEmail}
+                      </p>
+
                     </div>
+
                   </a>
+
                 )}
+
               </div>
+
             </div>
 
+
             <div className="lg:col-span-7">
+
               <ContactForm
                 title="Request a Tailored Equipment Plan"
                 subtitle="Fill out the form below and our equipment specialist will reach out within 2 hours."
               />
+
             </div>
+
           </div>
+
         </div>
+
       </section>
+
     </div>
   );
 }

@@ -1,6 +1,6 @@
 {
   "apphosting": {
-    "backendId": "clinidixcom",
+    "backendId": "coolpacksin",
     "rootDir": "/",
     "ignore": [
       "node_modules",

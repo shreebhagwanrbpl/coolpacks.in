@@ -6,6 +6,6 @@ export default function robots() {
         },
 
         sitemap:
-            "https://clinidix.com/sitemap.xml",
+            "https://coolpacks.in/sitemap.xml",
     };
 }

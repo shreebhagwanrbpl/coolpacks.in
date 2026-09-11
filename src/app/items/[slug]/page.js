@@ -9,9 +9,9 @@ export async function generateMetadata({ params }) {
 
     const title = `${productName} Supplier in India | Price, Dealer & Distributor | Raj Biosis Private Limited`;
 
-    const description = `Buy ${productName} at best price in India. Trusted supplier, dealer and distributor of ${productName} for hospitals, laboratories, diagnostic centers, research institutes and healthcare facilities. Contact Raj Biosis Private Limited (Raj Biomedical) for latest quotation and product details.`;
+    const description = `Buy ${productName} at best price in India. Trusted supplier, dealer and distributor of ${productName} for hospitals, laboratories, diagnostic centers, research institutes and healthcare facilities. Contact Raj Biosis Private Limited  for latest quotation and product details.`;
 
-    const url = `https://clinidix.com/items/${slug}`;
+    const url = `https://coolpacks.in/items/${slug}`;
 
     return {
         title,
@@ -40,7 +40,7 @@ export async function generateMetadata({ params }) {
             "Hospital Equipment",
             "Healthcare Equipment",
             "Raj Biosis Private Limited",
-            "Raj Biomedical",
+            "Raj Biosis",
         ],
 
         alternates: {
@@ -74,7 +74,7 @@ export async function generateMetadata({ params }) {
             },
         },
 
-        metadataBase: new URL("https://clinidix.com"),
+        metadataBase: new URL("https://coolpacks.in"),
     };
 }
 

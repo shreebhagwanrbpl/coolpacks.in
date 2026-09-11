@@ -58,7 +58,7 @@ export default function ContactForm({
         collection(
           db,
           "websitesQueries",
-          "clinidixcom",
+          "coolpacksin",
           "contactQueries"
         ),
         {
@@ -86,15 +86,15 @@ export default function ContactForm({
   };
 
   return (
-    <div className="rounded-3xl border border-[#E8D3BC] bg-white p-8 sm:p-10 shadow-xl shadow-[#C05800]/10">
+    <div className="rounded-3xl border border-slate-200 bg-white p-8 sm:p-10 shadow-xl shadow-slate-900/5">
       {title && (
-        <h3 className="text-2xl font-bold text-[#38240D] sm:text-3xl">
+        <h3 className="text-2xl font-bold text-slate-900 sm:text-3xl">
           {title}
         </h3>
       )}
 
       {subtitle && (
-        <p className="mt-2 text-sm sm:text-base text-[#5B4634]">
+        <p className="mt-2 text-sm sm:text-base text-slate-600">
           {subtitle}
         </p>
       )}
@@ -102,7 +102,7 @@ export default function ContactForm({
       <form onSubmit={handleSubmit} className="mt-8 space-y-5">
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-[#38240D] mb-2">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-2">
               Full Name *
             </label>
             <div className="relative">
@@ -112,18 +112,18 @@ export default function ContactForm({
                 value={form.name}
                 onChange={handleChange}
                 placeholder="e.g. Dr. Rajesh Kumar"
-                className="w-full rounded-2xl border border-[#E8D3BC] bg-[#FFF9EF]/50 px-4 py-3.5 pl-11 text-sm text-[#38240D] transition-all focus:border-[#C05800] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#C05800]/20"
+                className="w-full rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-3.5 pl-11 text-sm text-slate-900 transition-all focus:border-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-800/10"
                 required
               />
               <User
                 size={18}
-                className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#A89078]"
+                className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-[#38240D] mb-2">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-2">
               Phone Number *
             </label>
             <div className="relative">
@@ -133,19 +133,19 @@ export default function ContactForm({
                 value={form.phone}
                 onChange={handleChange}
                 placeholder="10-digit mobile number"
-                className="w-full rounded-2xl border border-[#E8D3BC] bg-[#FFF9EF]/50 px-4 py-3.5 pl-11 text-sm text-[#38240D] transition-all focus:border-[#C05800] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#C05800]/20"
+                className="w-full rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-3.5 pl-11 text-sm text-slate-900 transition-all focus:border-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-800/10"
                 required
               />
               <Phone
                 size={18}
-                className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#A89078]"
+                className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
               />
             </div>
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-[#38240D] mb-2">
+          <label className="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-2">
             Email Address *
           </label>
           <div className="relative">
@@ -155,18 +155,18 @@ export default function ContactForm({
               value={form.email}
               onChange={handleChange}
               placeholder="name@hospital.com"
-              className="w-full rounded-2xl border border-[#E8D3BC] bg-[#FFF9EF]/50 px-4 py-3.5 pl-11 text-sm text-[#38240D] transition-all focus:border-[#C05800] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#C05800]/20"
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-3.5 pl-11 text-sm text-slate-900 transition-all focus:border-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-800/10"
               required
             />
             <Mail
               size={18}
-              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#A89078]"
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-[#38240D] mb-2">
+          <label className="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-2">
             Your Requirement / Message *
           </label>
           <div className="relative">
@@ -176,12 +176,12 @@ export default function ContactForm({
               value={form.message}
               onChange={handleChange}
               placeholder="Tell us about your hospital/laboratory equipment requirements, required quantities, or service location..."
-              className="w-full rounded-2xl border border-[#E8D3BC] bg-[#FFF9EF]/50 px-4 py-3.5 pl-11 text-sm text-[#38240D] transition-all focus:border-[#C05800] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#C05800]/20"
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-3.5 pl-11 text-sm text-slate-900 transition-all focus:border-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-800/10"
               required
             />
             <MessageSquare
               size={18}
-              className="pointer-events-none absolute left-3.5 top-4 text-[#A89078]"
+              className="pointer-events-none absolute left-3.5 top-4 text-slate-400"
             />
           </div>
         </div>
@@ -189,20 +189,20 @@ export default function ContactForm({
         <button
           type="submit"
           disabled={submitting}
-          className="w-full flex items-center justify-center gap-2 rounded-2xl bg-[#C05800] py-4 text-base font-bold text-white shadow-lg transition-all hover:bg-[#713600] hover:shadow-xl hover:shadow-[#C05800]/25 disabled:opacity-60"
+          className="w-full flex items-center justify-center gap-2 rounded-2xl bg-slate-800 py-4 text-base font-bold !text-white shadow-lg transition-all hover:bg-slate-900 hover:shadow-xl hover:shadow-slate-900/20 disabled:opacity-60"
         >
           {submitting ? (
             <span>Submitting Inquiry...</span>
           ) : (
             <>
               <span>Submit Official Inquiry</span>
-              <Send size={18} />
+              <Send size={18} className="!text-white" />
             </>
           )}
         </button>
 
-        <p className="flex items-center justify-center gap-2 text-xs text-[#5B4634] text-center pt-2">
-          <CheckCircle2 size={14} className="text-[#C05800]" />
+        <p className="flex items-center justify-center gap-2 text-xs text-slate-500 text-center pt-2">
+          <CheckCircle2 size={14} className="text-slate-700" />
           <span>Your information is protected under strict privacy protocols.</span>
         </p>
       </form>

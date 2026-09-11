@@ -9,9 +9,9 @@ export async function generateMetadata({ params }) {
   const url = `https://.com/${district}`;
 
   return {
-    title: `Biomedical & Diagnostic Equipment Supplier in ${districtName} | Raj Biomedical`,
+    title: `Biomedical & Diagnostic Equipment Supplier in ${districtName} | Raj Biosis`,
 
-    description: `Raj Biomedical supplies diagnostic machines, laboratory equipment, reagents and biomedical products in ${districtName}.`,
+    description: `Raj Biosis supplies diagnostic machines, laboratory equipment, reagents and biomedical products in ${districtName}.`,
 
     keywords: [
       `Biomedical Equipment ${districtName}`,

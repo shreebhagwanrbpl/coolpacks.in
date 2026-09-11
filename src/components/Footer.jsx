@@ -52,7 +52,7 @@ export default function Footer() {
         // 1. Fetch Contact Info
         try {
           const snap = await getDoc(
-            doc(db, "websites", "clinidixcom", "pages", "contact")
+            doc(db, "websites", "coolpacksin", "pages", "contact")
           );
           if (isMounted && snap.exists()) {
             setContactInfo(snap.data().contactInfo || []);
@@ -94,7 +94,7 @@ export default function Footer() {
 
       try {
         const snap = await getDoc(
-          doc(db, "websites", "clinidixcom", "districts", district)
+          doc(db, "websites", "coolpacksin", "districts", district)
         );
 
         if (snap.exists()) {
@@ -173,23 +173,23 @@ export default function Footer() {
 
   if (loading) {
     return (
-      <footer className="border-t border-[#E8D3BC] bg-[#FDFBD4]">
+      <footer className="border-t border-slate-200 bg-slate-50">
         <div className="container-custom py-16">
           <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
             {[...Array(4)].map((_, i) => (
               <div key={i}>
-                <div className="mb-6 h-8 w-40 animate-pulse rounded bg-[#EAD9C4]" />
+                <div className="mb-6 h-8 w-40 animate-pulse rounded bg-slate-200" />
                 {[...Array(5)].map((_, j) => (
                   <div
                     key={j}
-                    className="mb-4 h-5 animate-pulse rounded bg-[#F3E4D2]"
+                    className="mb-4 h-5 animate-pulse rounded bg-slate-100"
                   />
                 ))}
               </div>
             ))}
           </div>
-          <div className="mt-12 border-t border-[#E8D3BC] pt-6">
-            <div className="h-5 w-72 animate-pulse rounded bg-[#EAD9C4]" />
+          <div className="mt-12 border-t border-slate-200 pt-6">
+            <div className="h-5 w-72 animate-pulse rounded bg-slate-200" />
           </div>
         </div>
       </footer>
@@ -197,7 +197,7 @@ export default function Footer() {
   }
 
   return (
-    <footer className="border-t border-[#E8D3BC] bg-gradient-to-b from-white via-[#FFF9EF] to-[#FDFBD4]">
+    <footer className="border-t border-slate-200 bg-gradient-to-b from-white via-slate-50 to-slate-100/70">
       <div className="container-custom py-14 sm:py-16">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {/* Company & Social */}
@@ -215,14 +215,14 @@ export default function Footer() {
                 />
               </Link>
 
-              <p className="mt-3 text-sm leading-relaxed text-[#5B4634]">
+              <p className="mt-3 text-sm leading-relaxed text-slate-600">
                 Delivering certified biomedical and diagnostic instruments, NABL calibration standards, and 24/7 technical field engineering support across India.
               </p>
             </div>
 
             {/* Social Media Links */}
-            <div className="mt-6 pt-4 border-t border-[#E8D3BC]/60">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[#713600] mb-3">
+            <div className="mt-6 pt-4 border-t border-slate-200">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3">
                 Follow Us
               </h4>
               <div className="flex items-center gap-3">
@@ -231,7 +231,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Follow Raj Biosis on Facebook"
-                  className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#E8D3BC] bg-white text-[#1877F2] shadow-sm transition-all duration-300 hover:scale-110 hover:bg-[#1877F2] hover:text-white hover:shadow-md"
+                  className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-[#1877F2] shadow-sm transition-all duration-300 hover:scale-110 hover:bg-[#1877F2] hover:text-white hover:shadow-md"
                 >
                   <FaFacebook size={20} />
                 </a>
@@ -241,7 +241,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Follow Raj Biosis on Instagram"
-                  className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#E8D3BC] bg-white text-[#E4405F] shadow-sm transition-all duration-300 hover:scale-110 hover:bg-gradient-to-tr hover:from-[#F58529] hover:via-[#DD2A7B] hover:to-[#8134AF] hover:text-white hover:shadow-md"
+                  className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-[#E4405F] shadow-sm transition-all duration-300 hover:scale-110 hover:bg-gradient-to-tr hover:from-[#F58529] hover:via-[#DD2A7B] hover:to-[#8134AF] hover:text-white hover:shadow-md"
                 >
                   <FaInstagram size={20} />
                 </a>
@@ -251,7 +251,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="mb-5 text-lg font-bold text-[#38240D]">
+            <h3 className="mb-5 text-lg font-bold text-slate-900">
               Quick Links
             </h3>
             <div className="flex flex-col gap-3 text-sm font-medium">
@@ -265,9 +265,9 @@ export default function Footer() {
                 <Link
                   key={item.name}
                   href={makeLink(item.link)}
-                  className="text-[#5B4634] transition-all duration-300 hover:translate-x-1.5 hover:text-[#C05800] flex items-center gap-1.5"
+                  className="text-slate-600 transition-all duration-300 hover:translate-x-1.5 hover:text-slate-900 flex items-center gap-1.5"
                 >
-                  <ArrowRight size={14} className="text-[#C05800] opacity-60" />
+                  <ArrowRight size={14} className="text-slate-400" />
                   <span>{item.name}</span>
                 </Link>
               ))}
@@ -276,7 +276,7 @@ export default function Footer() {
 
           {/* Dynamic Categories */}
           <div>
-            <h3 className="mb-5 text-lg font-bold text-[#38240D]">
+            <h3 className="mb-5 text-lg font-bold text-slate-900">
               Product Categories
             </h3>
             <div className="flex flex-col gap-2.5 text-sm font-medium">
@@ -284,15 +284,15 @@ export default function Footer() {
                 <Link
                   key={idx}
                   href={makeLink(`/items?category=${encodeURIComponent(cat)}`)}
-                  className="text-[#5B4634] transition-all duration-300 hover:translate-x-1.5 hover:text-[#C05800] flex items-center gap-1.5"
+                  className="text-slate-600 transition-all duration-300 hover:translate-x-1.5 hover:text-slate-900 flex items-center gap-1.5"
                 >
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#C05800]" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-700" />
                   <span className="truncate">{cat}</span>
                 </Link>
               ))}
               <Link
                 href={makeLink("/items")}
-                className="mt-2 text-xs font-bold text-[#C05800] hover:underline"
+                className="mt-2 text-xs font-bold text-slate-900 hover:underline"
               >
                 View Full Catalog →
               </Link>
@@ -301,15 +301,15 @@ export default function Footer() {
 
           {/* Contact Info - Purely Dynamic from Firestore */}
           <div>
-            <h3 className="mb-5 text-lg font-bold text-[#38240D]">
+            <h3 className="mb-5 text-lg font-bold text-slate-900">
               Contact Info
             </h3>
 
-            <div className="space-y-4 text-[#5B4634]">
+            <div className="space-y-4 text-slate-600">
               {dynamicAddress && (
                 <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#F3E4D2]">
-                    <MapPin size={18} className="text-[#C05800]" />
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-800">
+                    <MapPin size={18} />
                   </div>
                   <p className="leading-6 text-sm">{dynamicAddress}</p>
                 </div>
@@ -317,15 +317,15 @@ export default function Footer() {
 
               {phones.length > 0 && (
                 <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#F3E4D2]">
-                    <Phone size={18} className="text-[#C05800]" />
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-800">
+                    <Phone size={18} />
                   </div>
                   <div className="flex flex-col gap-1 text-sm font-semibold">
                     {phones.map((p, idx) => (
                       <a
                         key={idx}
                         href={`tel:${String(p).replace(/\s+/g, "")}`}
-                        className="hover:text-[#C05800] transition-colors"
+                        className="hover:text-slate-900 transition-colors"
                       >
                         {p}
                       </a>
@@ -336,15 +336,15 @@ export default function Footer() {
 
               {emails.length > 0 && (
                 <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#F3E4D2]">
-                    <Mail size={18} className="text-[#C05800]" />
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-800">
+                    <Mail size={18} />
                   </div>
                   <div className="flex flex-col gap-1 text-sm font-semibold">
                     {emails.map((em, idx) => (
                       <a
                         key={idx}
                         href={`mailto:${em}`}
-                        className="hover:text-[#C05800] transition-colors break-all"
+                        className="hover:text-slate-900 transition-colors break-all"
                       >
                         {em}
                       </a>
@@ -354,7 +354,7 @@ export default function Footer() {
               )}
 
               {!dynamicAddress && phones.length === 0 && emails.length === 0 && (
-                <p className="text-xs text-[#713600]">
+                <p className="text-xs text-slate-500">
                   Contact info will appear here once configured in the Admin panel.
                 </p>
               )}
@@ -363,14 +363,14 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar with Copyright & Social Icon Backup */}
-        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-[#E8D3BC] pt-8 text-sm text-[#6B5A4A] md:flex-row">
+        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-slate-200 pt-8 text-sm text-slate-500 md:flex-row">
           <p>© 2026 Raj Biosis Private Limited. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <a
               href="https://www.facebook.com/rajbiosispvtltd/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#5B4634] hover:text-[#1877F2] transition-colors"
+              className="text-slate-500 hover:text-[#1877F2] transition-colors"
               aria-label="Facebook"
             >
               <FaFacebook size={18} />
@@ -379,12 +379,12 @@ export default function Footer() {
               href="https://www.instagram.com/rajbiosisindia/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#5B4634] hover:text-[#E4405F] transition-colors"
+              className="text-slate-500 hover:text-[#E4405F] transition-colors"
               aria-label="Instagram"
             >
               <FaInstagram size={18} />
             </a>
-            <span className="text-xs text-[#713600]">
+            <span className="text-xs text-slate-600">
               Empowering Precision Healthcare Nationwide
             </span>
           </div>
